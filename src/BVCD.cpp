@@ -341,6 +341,8 @@ void BVCD::VCD_Event::dumpText(std::string& stream)
         stream += stringParser.format("active \"0\"\n");
     if ((bool)(this->flags&VCD_Flags::playOverScript))
         stream += stringParser.format("playoverscript\n");
+    if ((bool)(this->flags&VCD_Flags::syncToFollowingGesture))
+        stream += stringParser.format("synctofollowinggesture\n");
     //int precision = stream.precision();
     if (distanceToTarget>0)
         stream += stringParser.format("distancetotarget {0:-.2f}",distanceToTarget);
