@@ -59,7 +59,8 @@ namespace BVCD {
         fixedLength=1<<2,
         isActive=1<<3,
         forceShortMovement=1<<4,
-        playOverScript=1<<5
+        playOverScript=1<<5,
+        syncToFollowingGesture=1<<6,
     };
     enum class TrackFlags : unsigned char
     {
