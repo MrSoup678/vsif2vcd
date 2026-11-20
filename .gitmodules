@@ -13,9 +13,6 @@
 [submodule "thirdparty/wildcard"]
 	path = thirdparty/wildcard
 	url = https://github.com/SlawekNowy/wildest-card
-[submodule "vcpkg"]
-	path = vcpkg
-	url = https://github.com/microsoft/vcpkg
 [submodule "thirdparty/spdlog"]
 	path = thirdparty/spdlog
 	url = https://github.com/SlawekNowy/spdlog

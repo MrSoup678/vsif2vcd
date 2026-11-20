@@ -6,12 +6,12 @@ include_guard(GLOBAL)
 set(CMAKE_PDB_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/pdbs")
 #set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/externals/sanitizers-cmake/cmake" ${CMAKE_MODULE_PATH})
 #find_package(Sanitizers)
-if(NOT "$ENV{CI}")
-include(cmake/locate_vcpkg.cmake)
+#if(NOT "$ENV{CI}")
+#include(cmake/locate_vcpkg.cmake)
 
 #include(cmake/asan.cmake)
-setup_vcpkg_before_project()
-endif()
+#setup_vcpkg_before_project()
+#endif()
 #TODO: stop if we use vs2015 or older
 
 project(Vsif2Vcd VERSION 1.1.1.0
@@ -96,15 +96,17 @@ endif()
 add_executable (Vsif2vcd ${SOURCES} ${PRIVATE_INCLUDES})
 target_precompile_headers(Vsif2vcd PUBLIC "include/pch.hpp")
 
-add_subdirectory(thirdparty/hllib/HLLib)
-add_subdirectory(thirdparty/valve-bsp-parser)
+#add_subdirectory(thirdparty/hllib/HLLib)
+#add_subdirectory(thirdparty/valve-bsp-parser)
+add_subdirectory(thirdparty/sourcepp)
 add_subdirectory(thirdparty/fcaseopen)
 add_subdirectory(thirdparty/wildcard)
+#add_subdirectory(thirdparty/lzma)
 
 
-add_dependencies(Vsif2vcd valve-bsp-parser lzma hllib)
+add_dependencies(Vsif2vcd sourcepp::bsppp sourcepp::vpkpp spdlog::spdlog)
 set_property(TARGET Vsif2vcd PROPERTY CXX_STANDARD 20)
-target_link_libraries(Vsif2vcd PUBLIC Boost::iostreams Bitsery::bitsery lzma valve-bsp-parser hllib spdlog::spdlog fcaseopen wildest_card)
+target_link_libraries(Vsif2vcd PUBLIC Boost::iostreams Bitsery::bitsery sourcepp::bsppp sourcepp::vpkpp sourcepp spdlog::spdlog fcaseopen wildest_card)
 
 target_link_libraries(Vsif2vcd PRIVATE fmt::fmt)
 
@@ -142,7 +144,7 @@ target_include_directories(Vsif2vcd PUBLIC
 
   
 install(TARGETS Vsif2vcd RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX} COMPONENT Vsif2VCD)
-install(TARGETS hllib RUNTIME COMPONENT Vsif2vcd DESTINATION ${CMAKE_INSTALL_PREFIX})
+#install(TARGETS hllib RUNTIME COMPONENT Vsif2vcd DESTINATION ${CMAKE_INSTALL_PREFIX})
 #Outside of Windows TARGET_RUNTIME_DLL expands to empty strings which will screw up the install script.
 if(WIN32)
 add_custom_command(TARGET Vsif2vcd POST_BUILD

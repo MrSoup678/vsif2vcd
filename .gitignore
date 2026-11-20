@@ -449,3 +449,5 @@ CMakeUserPresets.json
 
 builds/*
 dist/*
+
+.qtcreator/
