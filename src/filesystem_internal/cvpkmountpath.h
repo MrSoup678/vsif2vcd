@@ -3,7 +3,7 @@
 
 #include <filesystem/imountpath.h>
 
-#include <Package.h>
+#include <vpkpp/vpkpp.h>
 
 class CVPKMountPath : public IMountPath
 {
@@ -14,9 +14,9 @@ public:
 
 
 
-    virtual ~CVPKMountPath();
+    virtual ~CVPKMountPath() =default;
 private:
-    HLLib::CPackage* packageHandler;
+    std::shared_ptr<vpkpp::PackFile> packageHandler;
 
 
     // IMountPath interface

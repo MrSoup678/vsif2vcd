@@ -1,31 +1,25 @@
 #include "cvpkmountpath.h"
-#include <VPKFile.h>
 #include <cstring>
-#include <DirectoryItems.h>
 
-#include <HLLib.h>
 #include "cvpkinfile.h"
 #include <wildcard.h>
 
 CVPKMountPath::CVPKMountPath(std::string path)
 {
-	hlInitialize();
-	packageHandler = HLLib::CPackage::AutoOpen(path.c_str(), HLFileMode::HL_MODE_READ);
+        //hlInitialize();
+        //packageHandler = HLLib::CPackage::AutoOpen(path.c_str(), HLFileMode::HL_MODE_READ);
+    packageHandler = std::move(vpkpp::VPK::open(path));
 	filePath = path;
 
 }
 
-CVPKMountPath::~CVPKMountPath() {
-	packageHandler->Close();
-	hlShutdown();
-}
 
 std::vector<std::shared_ptr<IFile>> CVPKMountPath::Find(std::string substr)
 {
 
-	HLLib::CDirectoryFolder* pRoot = packageHandler->GetRoot();
+        //HLLib::CDirectoryFolder* pRoot = packageHandler->GetRoot();
 
-	pRoot->Sort(); //by default this searches alphabetically and recursively
+        //pRoot->Sort(); //by default this searches alphabetically and recursively
     //lazy init
     if(this->fileList.empty())
     {
@@ -41,9 +35,8 @@ std::vector<std::shared_ptr<IFile>> CVPKMountPath::Find(std::string substr)
 	std::vector<std::shared_ptr<IFile>> results;
 
 
-	for (const auto& path : matchingPaths) {
-		HLLib::CDirectoryItem* pSubstrPos = pRoot->GetRelativeItem(path.c_str());
-		std::shared_ptr<IFile> fileHandle = std::make_shared<CVPKInFile>(CVPKInFile(this->filePath, path, pSubstrPos));
+        for (const auto& path : matchingPaths) {
+                std::shared_ptr<IFile> fileHandle = std::make_shared<CVPKInFile>(CVPKInFile(this->filePath, path,this->packageHandler));
 		results.push_back(std::move(fileHandle));
 	}
 
@@ -51,8 +44,8 @@ std::vector<std::shared_ptr<IFile>> CVPKMountPath::Find(std::string substr)
 
 	return results;
 }
-
-static void DoList(std::vector<std::string>& files, HLLib::CDirectoryFolder* pDir)
+/*
+static void DoList(std::vector<std::string>& files, std::weak_ptr<vpkpp::Entry> pDir)
 {
 	pDir->Sort();
 	auto itemCount = pDir->GetCount();
@@ -82,8 +75,11 @@ static void DoList(std::vector<std::string>& files, HLLib::CDirectoryFolder* pDi
 
 
 }
+*/
 void CVPKMountPath::ListFiles(std::vector<std::string>& files)
 {
-	HLLib::CDirectoryFolder* pDir = packageHandler->GetRoot();
-	DoList(files, pDir);
+    packageHandler->runForAllEntries([files](const std::string& path, const vpkpp::Entry& entry) -> void
+                                     {
+                                        const_cast<std::vector<std::string>&>(files).emplace_back(path);
+                                     },false);
 }

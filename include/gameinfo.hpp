@@ -32,6 +32,7 @@
 
 #define BASEGAME_DIR_TMPL "|all_source_engine_paths|"
 #define MODDIR_TMPL "|gameinfo_path|"
+#define EXTERNAL_APP_MOUNT_TMPL "|app_" // then appid then '|'
 namespace FileSystem {
 	enum class PathID : unsigned short
 	{

@@ -2,15 +2,15 @@
 #define CVPKINFILE_H
 
 #include <filesystem/ifile.h>
-#include <DirectoryItem.h>
+#include <vpkpp/vpkpp.h>
 
 class CVPKInFile : public IFile
 {
 public:
-    CVPKInFile(std::string basePath,std::string relPath,HLLib::CDirectoryItem* fileHandle);
+    CVPKInFile(std::string basePath,std::string relPath,std::weak_ptr<vpkpp::PackFile> archiveHandle);
      bool extract(std::string whereTo, std::string &errorStr) override;
 private:
-     HLLib::CDirectoryItem* fileHandle;
+     std::shared_ptr<vpkpp::PackFile> archiveHandle;
 };
 
 #endif // CVPKINFILE_H

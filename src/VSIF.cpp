@@ -40,7 +40,7 @@ void VSIF::ValveScenesImageFile::fillWithVCDS()
         //TODO - can std::next return end iterator?
         uint32_t startPos = entry.Offset-dataPos;
 
-        std::vector<char> bvcd(std::next(sceneBuffer.begin(),startPos),
+        std::vector<std::byte> bvcd(std::next(sceneBuffer.begin(),startPos),
                            std::next(sceneBuffer.begin(),startPos+entry.Size));
 
 

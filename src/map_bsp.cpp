@@ -15,7 +15,8 @@
 
 #include "program.h"
 #include "response_system.h"
-#include <valve-bsp-parser/bsp_parser.hpp>
+//#include <valve-bsp-parser/bsp_parser.hpp>
+#include <bsppp/bsppp.h>
 
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/stdout_sinks.h>
@@ -46,27 +47,32 @@ int BSPParser::ExtractNames(std::string GameDirectory)
 
     
 
-    using namespace rn;
-    bsp_parser map;
+    //using namespace rn;
+    //bsp_parser map;
     //TODO: check if we dont miss anything...
 
     for (auto iter = maplist.begin();iter!=maplist.end();++iter) {
         //load map.
-
-        if (map.load_map(GameDirectory+"/maps/",*iter)) {
+        bsppp::BSP bspIter(GameDirectory+"/maps/"+*iter);
+        if(!bspIter)
+            continue; //no map
+        //if (map.load_map(GameDirectory+"/maps/",*iter)) {
             //Map is fully loaded. Check for logic_choreographed_scene
 
             std::vector<Map_Scene> scenes;
 
-            for (auto entity = map.entities.begin();entity!=map.entities.end();++entity) {
-                if (entity->keyvalues["classname"] =="logic_choreographed_scene"){
-                    std::string sceneName = entity->keyvalues["SceneFile"];
+            auto entitiesKV = bspIter.getLumpData<bsppp::BSPLump::ENTITIES>();
+
+            for (auto entityIter = entitiesKV.begin();entityIter!=entitiesKV.end();++entityIter) {
+                auto entity = *entityIter;
+                if (entity["classname"].getValue<std::string>() =="logic_choreographed_scene"){
+                    const std::string sceneName = entity["SceneFile"].getValue<std::string>();
                     Map_Scene scene = Map_Scene(sceneName.c_str());
                     scenes.emplace_back(scene);
                 }
-                if (entity->keyvalues["classname"] == "env_speaker") {//HL2: env_speaker uses its own script. Parse them separately if possible.
+                if (entity["classname"].getValue<std::string>() == "env_speaker") {//HL2: env_speaker uses its own script. Parse them separately if possible.
                     //TODO: append value of rulescript to scripts to parse.
-                        RRParser::entryPointsToParse.push_back(entity->keyvalues["rulescript"]);
+                        RRParser::entryPointsToParse.push_back(entity["rulescript"].getValue<std::string>());
 
 
                 }
@@ -75,9 +81,9 @@ int BSPParser::ExtractNames(std::string GameDirectory)
             //Scenes.insert(Scenes.end(),scenes.begin(),scenes.end());
             Scenes.emplace(*iter,scenes);
             SPDLOG_INFO("Found {0} scene filenames in {1}!", scenes.size(), *iter);
-            map.unload_map();
+            //map.unload_map();
             
-    };
+    //};
 
 
 

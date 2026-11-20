@@ -61,24 +61,20 @@ namespace BVCD {
 
 using BVCD::stringParser;
 
-BVCD::VCD BVCD::getSceneFromBuffer(std::vector<char> buffer) {
-        char magic[4] = { buffer[0],buffer[1],buffer[2],buffer[3] };
-        uint32_t readMagic = Helper::FourCC(magic);
+BVCD::VCD BVCD::getSceneFromBuffer(std::vector<std::byte> buffer) {
+        std::byte magic[4] = { buffer[0],buffer[1],buffer[2],buffer[3] };
+        uint32_t readMagic = Helper::FourCC((char*)magic);
 
-        using Buffer = std::vector<char>;
+        using Buffer = std::vector<std::byte>;
         //using OutputAdapter = bitsery::OutputBufferAdapter<Buffer>;
         using InputAdapter = bitsery::InputBufferAdapter<Buffer>;
 
         memcpy(magic,"LZMA",4* sizeof(char));
-        if (readMagic == Helper::FourCC(magic)) {
-            BVCD::CompressedVCD vcdToDecompress;
+        if (readMagic == Helper::FourCC((char*)magic)) {
+            /*BVCD::CompressedVCD vcdToDecompress;
             bitsery::quickDeserialization<InputAdapter, BVCD::CompressedVCD>(InputAdapter{ buffer.begin(),buffer.end() }, vcdToDecompress);
             //since we use streams we need to copy to one
-            /*
-            boost::iostreams::filtering_istreambuf in;
-            in.push(boost::iostreams::lzma_decompressor());
-            in.push(boost::make_iterator_range(vcdToDecompress.compressedBuffer.begin(),vcdToDecompress.compressedBuffer.end()));
-            */
+
             std::vector<char> decompressedBuffer;
             unsigned char* decompressed = new unsigned char[vcdToDecompress.realSize+1];
             unsigned char* compressed = new unsigned char[vcdToDecompress.compressedSize+1];
@@ -99,18 +95,19 @@ BVCD::VCD BVCD::getSceneFromBuffer(std::vector<char> buffer) {
 
             memset(decompressed,0,vcdToDecompress.realSize);
             memset(compressed,0,vcdToDecompress.compressedSize);
+
             delete[] compressed;
             delete[] decompressed;
-
+*/
 
     //        boost::iostreams::stream_buffer<boost::iostreams::back_insert_device<std::vector<uint8_t>>> outStream(decompressedBuffer);
 
-            return getSceneFromBuffer(decompressedBuffer);
+            return getSceneFromBuffer(sourcepp::compression::decompressValveLZMA(buffer).value());
 
             }
 
         memcpy(magic,"bvcd",sizeof(char)*4);
-        assert(BVCD::FourCC(magic) == readMagic);
+        assert(BVCD::FourCC((char*)magic) == readMagic);
         BVCD::VCD vcd;
         bitsery::quickDeserialization<InputAdapter, BVCD::VCD>(InputAdapter{ buffer.begin(),buffer.end() }, vcd);
 

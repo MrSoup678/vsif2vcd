@@ -6,7 +6,8 @@
 #include "enum_bitmask.hpp"
 
 #include "VSIFStringPool.hpp"
-#include <LzmaLib.h>
+//#include <LzmaLib.h>
+#include <sourcepp/compression/LZMA.h>
 
 
 #include <sstream>
@@ -299,7 +300,7 @@ struct membuf : std::streambuf
 };
 
 
-VCD getSceneFromBuffer(std::vector<char> buffer);
+VCD getSceneFromBuffer(std::vector<std::byte> buffer);
 
 
 

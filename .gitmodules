@@ -16,3 +16,9 @@
 [submodule "thirdparty/spdlog"]
 	path = thirdparty/spdlog
 	url = https://github.com/SlawekNowy/spdlog
+[submodule "thirdparty/sourcepp"]
+	path = thirdparty/sourcepp
+	url = https://github.com/craftablescience/sourcepp.git
+[submodule "thirdparty/lzma"]
+	path = thirdparty/lzma
+	url = https://github.com/MrSoup678/liblzma.git

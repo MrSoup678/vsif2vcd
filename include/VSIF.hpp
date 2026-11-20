@@ -94,7 +94,7 @@ namespace VSIF {
 		std::vector<VSIF_SceneSummary> summaries;
 		uint32_t dataPos;
 		//Cannot make a vector of structs since that data might be compressed
-		std::vector<char> sceneBuffer;
+                std::vector<std::byte> sceneBuffer;
 
         std::vector<BVCD::VCD> vcds;
         void fillWithVCDS();
@@ -203,7 +203,7 @@ namespace VSIF {
         //HACK: There MUST be faster way.
         s.adapter().template readBuffer<1,char>(tmp,(size_t)dataSize);
         //assert();
-        vsif.sceneBuffer = std::vector<char>(tmp, tmp + dataSize+1);
+        vsif.sceneBuffer = std::vector<std::byte>((std::byte*)tmp, (std::byte*)tmp + dataSize+1);
         delete[] tmp;
         /*
         for (int i = 0; i < (vsif.size - vsif.dataPos); i++) {

@@ -1,12 +1,13 @@
 #include "cvpkinfile.h"
-#include <HLTypes.h>
-#include <HLLib.h>
+//#include <HLTypes.h>
+//#include <HLLib.h>
+
 #include <filesystem>
-CVPKInFile::CVPKInFile(std::string basePath,std::string relPath,HLLib::CDirectoryItem* fileHandle)
+CVPKInFile::CVPKInFile(std::string basePath,std::string relPath,std::weak_ptr<vpkpp::PackFile> archiveHandle)
 {
     this->basePath = basePath;
     this->relPath = relPath;
-    this->fileHandle = fileHandle;
+    this->archiveHandle = archiveHandle.lock();
 
 
 }
@@ -14,7 +15,8 @@ CVPKInFile::CVPKInFile(std::string basePath,std::string relPath,HLLib::CDirector
 bool  CVPKInFile::extract(std::string whereTo, std::string &errorStr)
 {
     std::string extractPath = whereTo;
-
+    bool success = false;
+/*
     if (this->fileHandle->GetType()==HLDirectoryItemType::HL_ITEM_FILE) {
         std::string truePath = this->relPath;
         std::filesystem::path path(truePath);
@@ -28,6 +30,8 @@ bool  CVPKInFile::extract(std::string whereTo, std::string &errorStr)
     if (!success) {
         errorStr= hlGetString(HLOption::HL_ERROR_LONG_FORMATED);
     }
+    */
+    this->archiveHandle->extractEntry(relPath,std::filesystem::path(whereTo).append(relPath));
     return success;
 }
 
